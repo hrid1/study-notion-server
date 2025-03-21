@@ -13,6 +13,6 @@ const SectionSchema = new mongoose({
     }
   ]
  
-});
+}); 
 
 module.exports = mongoose.model("Section", SectionSchema);

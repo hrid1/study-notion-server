@@ -1,21 +1,50 @@
 const mongoose = require("mongoose");
 
-const ProfileSchema = new mongoose({
-  gender: {
+const CourseSchema = new mongoose({
+  courseName: {
+    type: String,
+    required: true,
+  },
+  courseDescription: {
+    type: String,
+    required: true,
+  },
+  instructor: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+  },
+  whatYouWillLearn: {
     type: String,
   },
-  dateOfBirth: {
-    type: String,
-  },
-  about: {
-    type: String,
-    trim: true,
-  },
-  contactNumber: {
+  courseContent: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Section",
+    },
+  ],
+  ratingAndReviews: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "RatingAndReview",
+    },
+  ],
+  pirce: {
     type: Number,
-    trim: true,
   },
+  thumbnail: {
+    type: String,
+  },
+  tag: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Tag",
+  },
+  studentsEnrolled: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: "User",
+    },
+  ],
 });
 
-module.exports = mongoose.model("Profile", ProfileSchema);
- 
+module.exports = mongoose.model("Course", CourseSchema);
