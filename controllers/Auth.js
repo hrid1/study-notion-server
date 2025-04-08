@@ -3,6 +3,8 @@ const OTP = require("../models/Otp");
 const otpGenerator = require("otp-generator");
 const Profile = require("../models/Profile");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+require("dotenv").config();
 
 // sendOTP
 exports.sendOTP = async (req, res) => {
@@ -155,7 +157,81 @@ exports.signUp = async (req, res) => {
     console.log(error);
     return res.status(500).json({
       success: false,
-      message: error.message,
+      message: "user cann't be registerd. please try again!",
     });
+  }
+};
+
+// Login
+exports.Login = async (req, res) => {
+  try {
+    // get data from body
+    const { email, password } = req.body;
+    // validation data
+    if (!email || !password) {
+      return res.status(403).json({
+        success: false,
+        message: "Email and password field are reqired",
+      });
+    }
+    // user checking exist or not
+    const user = User.findOne({ email }).populate("additionalDetails");
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        message: "User is not registerd! Plz signup.",
+      });
+    }
+    // generate jwt, after password matching
+    if (await bcrypt.compare(password, user.password)) {
+      const payload = {
+        email: user.email,
+        id: user._id,
+        role: user.role,
+      };
+      // create token
+      const token = jwt.sign(payload, process.env.JWT_SECRET, {
+        expiresIn: "2h",
+      });
+      user.token = token;
+      user.password = undefined;
+
+      // create cookes and send it to response
+      const options = {
+        expires: new Date(Date.now()) + 3 * 24 * 60 * 60 * 1000,
+        httpOnly: true,
+      };
+      res.cookie("token", token, options).status(200).json({
+        success: true,
+        token,
+        user,
+        message: "Logged in successfully ",
+      });
+    } else {
+      return res.status(401).json({
+        success: false,
+        message: "Password is incorrect.",
+      });
+    }
+    // create cookie and send response
+  } catch (error) {
+    console.log("Login error", error);
+    return res.status(500).json({
+      success: false,
+      message: "Login Failure, plz try again",
+    });
+  }
+};
+// TODO
+// changePassword 
+exports.changePassword = async (req, res) => {
+  // get data from req body
+  const { oldPassword, newPassword, confirmPassword } = req.body;
+  // get old password , newpassword, confirm passowrd
+  if(!oldPassword || !newPassword || !confirmPassword){
+    return res.status(500).json({
+      success: false,
+      message: "All field are required"
+    })
   }
 };
