@@ -187,7 +187,7 @@ exports.Login = async (req, res) => {
       const payload = {
         email: user.email,
         id: user._id,
-        role: user.role,
+        role: user.accountType,
       };
       // create token
       const token = jwt.sign(payload, process.env.JWT_SECRET, {
@@ -223,15 +223,15 @@ exports.Login = async (req, res) => {
   }
 };
 // TODO
-// changePassword 
+// changePassword
 exports.changePassword = async (req, res) => {
   // get data from req body
   const { oldPassword, newPassword, confirmPassword } = req.body;
   // get old password , newpassword, confirm passowrd
-  if(!oldPassword || !newPassword || !confirmPassword){
+  if (!oldPassword || !newPassword || !confirmPassword) {
     return res.status(500).json({
       success: false,
-      message: "All field are required"
-    })
+      message: "All field are required",
+    });
   }
 };
