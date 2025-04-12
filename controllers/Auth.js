@@ -226,9 +226,9 @@ exports.Login = async (req, res) => {
 // changePassword
 exports.changePassword = async (req, res) => {
   // get data from req body
-  const { oldPassword, newPassword, confirmPassword } = req.body;
+  const { oldPassword, newPassword, confirmNewPassword } = req.body;
   // get old password , newpassword, confirm passowrd
-  if (!oldPassword || !newPassword || !confirmPassword) {
+  if (!oldPassword || !newPassword || !confirmNewPassword) {
     return res.status(500).json({
       success: false,
       message: "All field are required",
